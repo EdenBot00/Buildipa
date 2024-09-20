@@ -22,7 +22,8 @@ class _SearchPageState extends State<SearchPage>
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 1), // Animation duration
-    )..repeat(reverse: true); // Repeat the animation
+    )
+      ..repeat(reverse: true); // Repeat the animation
 
     _fadeAnimation = Tween<double>(begin: 1.0, end: 0.4).animate(
       CurvedAnimation(parent: _controller!, curve: Curves.easeInOut),
@@ -60,8 +61,14 @@ class _SearchPageState extends State<SearchPage>
   @override
   Widget build(BuildContext context) {
     // Get the size of the screen
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
+    final screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
 
     return Scaffold(
       body: Stack(
@@ -158,17 +165,22 @@ class _SearchPageState extends State<SearchPage>
           // Adding the animated small white circle at the top, responsive position
           Positioned(
             top: screenHeight * 0.208, // 21% of the screen height
-            left: screenWidth / 1.97 -
-                (_getResponsiveCircleSize(screenWidth, screenHeight) / 2), // Centered horizontally
+            left: screenWidth / 2 -
+                ((screenWidth < screenHeight ? screenWidth : screenHeight) *
+                    0.10 /
+                    2), // Centered horizontally
             child: AnimatedBuilder(
               animation: _controller!,
               builder: (context, child) {
+                final double circleSize =
+                    (screenWidth < screenHeight ? screenWidth : screenHeight) *
+                        0.12;
                 return Opacity(
                   opacity: _fadeAnimation!.value,
                   child: ClipOval(
                     child: Container(
-                      width: _getResponsiveCircleSize(screenWidth, screenHeight),
-                      height: _getResponsiveCircleSize(screenWidth, screenHeight),
+                      width: circleSize,
+                      height: circleSize,
                       decoration: const BoxDecoration(
                         color: Colors.white, // Color of the circle
                       ),
@@ -190,19 +202,5 @@ class _SearchPageState extends State<SearchPage>
         ],
       ),
     );
-  }
-
-  double _getResponsiveCircleSize(double screenWidth, double screenHeight) {
-    double baseSize = (screenWidth < screenHeight ? screenWidth : screenHeight) * 0.12;
-
-    // Adjusting for smaller and larger screens
-    if (screenWidth > 1000 || screenHeight > 1000) {
-      return baseSize * 0.7; // Larger for tablets
-    } else if (screenWidth < 380 || screenHeight < 600) {
-      return baseSize * 0.9; // Smaller for compact phones
-    }else if (screenWidth > 380 || screenHeight > 600) {
-      return baseSize * 1.1; // Smaller for compact phones
-    }
-    return baseSize; // Default size for regular phones
   }
 }
